@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        *{box-sizing:border-box;  }
+        html{height:100%;  }
+        body{margin:0;  height:100%;  }
+        audio{height:32px;  }
+        
+        ::-webkit-scrollbar{ height:6px;  width: 6px;  background:none;  }
+        ::-webkit-scrollbar-thumb{ border-radius: 6px;  background-color:rgba(255, 255, 255, 0.9); }
+    
+        [v-cloak]{opacity:0;  }
+    
+        .flex{display:flex;  }
+        .flex.center{justify-content:center;  align-items:center;  }
+        .flex.acenter{align-items:center;  }
+        .flex.right{flex-direction:row-reverse;  }
+        .flex.top{flex-direction:column;  }
+        .flex.wrap{flex-wrap:wrap;  }
+        .flex-item{flex-shrink:0;  }
+        .flex-item.shrink{flex-shrink:1;  }
+        .flex-item.expand{flex-grow:1;  flex-shrink:1;  }
+        .flex-item.fixed{position:relative;  }
+        .flex-item.fixed>.flex{position:absolute;  top:0;  left:0;  right:0;  bottom:0;  overflow:auto;  }
+    
+    
+        #app{height:100%;  }
+        
+    </style>
+</head>
+<body>
+
+    <div id="app" v-cloak>
+        <div class="flex top" style="padding:10px;">
+            <div v-for="link in links" class="flex">
+                <a :href="link.url" style="width:200px;">{{ link.name }}</a>
+                <span>{{ link.size }}</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.21.0/dist/axios.js"></script>
+    <script type="module">
+        import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js'
+
+        new Vue({
+            el : '#app',
+            data(){
+                return {
+                    links : []
+                }
+            },
+            methods : {
+                drop(e){
+                    console.log(e);
+                },
+                initEvent(){
+                    document.addEventListener('paste',(e)=>{
+                        console.log( e.clipboardData , e.clipboardData.files ,  e.clipboardData.types , e.clipboardData.items );
+                    })
+                },
+                async init(){
+                    const { data } = await axios('/api'+location.pathname)
+                    this.links = data
+                }
+            },
+            mounted(){
+                this.init()
+                this.initEvent()
+            }
+        })
+    </script>
+</body>
+</html>
